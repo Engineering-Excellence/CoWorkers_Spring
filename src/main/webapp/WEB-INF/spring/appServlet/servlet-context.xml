@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+
+    <!-- Enables the Spring MVC @Controller programming model -->
+    <annotation-driven/>
+
+    <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+    <!--
+        images, css, js 파일이 위치한 경로를 지정한다.
+        주소 창에 요청이 들어오면 @Controller 어노테이션을 붙여준 클래스(컨트롤러)의 @RequestMapping 어노테이션의 인수로
+        지정된 내용을 검색해서 메서드를 실행하지만, 예외적으로 <resources> 태그의 mapping 속성에 지정된 요청이 들어오면
+        컨트롤러 클래스를 검색하지 않고 <resources> 태그의 location 속성에 지정된 경로를 검색한다.
+    -->
+    <resources mapping="/resources/**" location="/resources/"/>
+    <resources mapping="/images/**" location="/resources/images/"/>
+    <resources mapping="/css/**" location="/resources/css/"/>
+    <resources mapping="/js/**" location="/resources/js/"/>
+    <!--<resources mapping="/images/**" location="/WEB-INF/images/"/>
+    <resources mapping="/css/**" location="/WEB-INF/css/"/>
+    <resources mapping="/js/**" location="/WEB-INF/js/"/>-->
+
+    <!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+    <beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <beans:property name="prefix" value="/WEB-INF/views/"/>
+        <beans:property name="suffix" value=".jsp"/>
+    </beans:bean>
+
+    <!-- File Upload -->
+    <beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <beans:property name="defaultEncoding" value="utf-8"/>
+        <!-- 1024 * 1024 * 10 bytes 10MB -->
+        <beans:property name="maxUploadSize" value="104857560"/>
+        <!-- 1024 * 1024 * 2 bytes 2MB -->
+        <beans:property name="maxUploadSizePerFile" value="2097152"/>
+        <beans:property name="uploadTempDir" value="file:/Users/kyle/Downloads"/>
+        <beans:property name="maxInMemorySize" value="10485756"/>
+    </beans:bean>
+    <!--<beans:bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>-->
+
+    <context:component-scan base-package="com.crunch.controller"/>
+    <context:component-scan base-package="com.crunch.exception"/>
+
+</beans:beans>
