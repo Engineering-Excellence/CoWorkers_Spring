@@ -1,0 +1,54 @@
+/* Terry - error CSS 파일 */
+
+#wrap {
+	width: 100%;
+	height: 100%; 
+}
+
+#header {
+	text-align: center;
+	vertical-align: middle;
+	height: 45px;
+	background-color: #110235;
+	color: white;
+	font-weight: bold;
+	font-family: Dancing Script;
+	font-size: 20px;
+}
+
+table {
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 120px;
+}
+
+p {
+	font-weight: bold;
+	font-family: Dancing Script;
+	font-size: 40px;
+	text-align: center; 
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 60px;
+}
+
+form {
+	border: 0.2px solid lightgray;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 85px;
+	width: 800px;
+	height: 400px;
+	background-color: lavender;
+}
+
+#loginPage {
+	margin-left: 130px;
+	width: 190px;
+}
+
+#back {
+	margin-left: auto;
+	margin-right: auto;
+	width: 190px;
+}

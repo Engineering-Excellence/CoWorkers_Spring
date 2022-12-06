@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crunch.mapper.BoardMapper">
+
+    <!-- 전체 글의 개수를 불러온다. -->
+    <select id="boardSelectCount" resultType="int">
+        SELECT COUNT(*)
+        FROM BOARD
+    </select>
+
+    <!-- 1 페이지 분량의 글 목록을 불러온다. -->
+    <select id="boardSelectList" parameterType="java.util.HashMap" resultType="boardDTO">
+        SELECT *
+        FROM (SELECT ROWNUM RNUM, AA.*
+              FROM (SELECT *
+                    FROM BOARD
+                    ORDER BY POSTID DESC) AA)
+        WHERE RNUM BETWEEN #{startNo} AND #{endNo}
+    </select>
+
+    <!-- 새 글을 저장한다. -->
+    <insert id="boardInsert" parameterType="boardDTO">
+        INSERT INTO BOARD (POSTID, SUBJECT, USERNAME, CONTENT, NOTICE, IP, USERID)
+        VALUES (BOARD_POSTID_SEQ.nextval, #{subject}, #{userName}, #{content}, #{notice}, #{ip}, #{userID})
+    </insert>
+
+    <!-- 모든 공지글을 얻어온다. -->
+    <select id="boardSelectNotice" resultType="boardDTO">
+        SELECT *
+        FROM BOARD
+        WHERE notice = 'true'
+        ORDER BY POSTID DESC
+    </select>
+
+    <!-- 조회수를 증가시킨다. -->
+    <update id="boardHit" parameterType="int">
+        UPDATE BOARD
+        SET HIT = HIT + 1
+        WHERE POSTID = #{postID}
+    </update>
+
+    <!-- 글 1건을 얻어온다. -->
+    <select id="boardSelectByPostID" parameterType="int" resultType="boardDTO">
+        SELECT *
+        FROM BOARD
+        WHERE POSTID = #{postID}
+    </select>
+
+    <!-- 글 1건을 삭제(블라인드 처리)한다. -->
+    <update id="boardDelete" parameterType="int">
+        UPDATE BOARD
+        SET DELETEDATE = SYSDATE
+        WHERE POSTID = #{postID}
+    </update>
+
+    <!-- 글 1건을 수정한다. -->
+    <update id="boardUpdate" parameterType="boardDTO">
+        UPDATE BOARD
+        SET SUBJECT    = #{subject}
+          , CONTENT    = #{content}
+          , NOTICE     = #{notice}
+          , IP         = #{ip}
+          , UPDATEDATE = SYSDATE
+        WHERE POSTID = #{postID}
+    </update>
+</mapper>

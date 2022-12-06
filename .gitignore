@@ -266,4 +266,4 @@ classes/
 *.eml
 .classpath
 .project
-src/main/java/com/silvertier/mybatis/db.properties
+src/test/

@@ -1,0 +1,27 @@
+@charset "UTF-8";
+
+	td {
+		padding: 0px;
+	}
+	
+	.eveOne{
+		border: medium solid darkgray;
+	}
+	
+	.startdate{
+		border-top: medium solid darkgray;
+		border-left: medium solid darkgray;
+		border-bottom: medium solid darkgray;
+		color: white
+	}
+	
+	.btween{
+		border-top: medium solid darkgray;
+		border-bottom: medium solid darkgray;
+	}
+	
+	.deadline{
+		border-top: medium solid darkgray;
+		border-right: medium solid darkgray;
+		border-bottom: medium solid darkgray;
+	}
