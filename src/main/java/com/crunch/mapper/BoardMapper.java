@@ -2,6 +2,7 @@ package com.crunch.mapper;
 
 import com.crunch.domain.BoardDTO;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface BoardMapper {
 
     BoardDTO boardSelectByPostID(int postID);
 
-    BoardDTO boardSelectNotice();
+    ArrayList<BoardDTO> boardSelectNotice();
 
     void boardHit(int postID);
 

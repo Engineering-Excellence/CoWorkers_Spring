@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,19 +29,35 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardDTO selectByPostID(int postID) {
-
-        log.info("BoardServiceImpl의 select() 실행");
-
-        return mapper.boardSelectByPostID(postID);
-    }
-
-    @Override
     public List<BoardDTO> selectList(HashMap<String, Integer> hashMap) {
 
         log.info("BoardServiceImpl의 selectList() 실행");
 
         return mapper.boardSelectList(hashMap);
+    }
+
+    @Override
+    public BoardDTO selectByPostID(int postID) {
+
+        log.info("BoardServiceImpl의 selectByPostID() 실행");
+
+        return mapper.boardSelectByPostID(postID);
+    }
+
+    @Override
+    public ArrayList<BoardDTO> selectNotice() {
+
+        log.info("BoardServiceImpl의 selectNotice() 실행");
+
+        return mapper.boardSelectNotice();
+    }
+
+    @Override
+    public void hit(int postID) {
+
+        log.info("BoardServiceImpl의 hit() 실행");
+
+        mapper.boardHit(postID);
     }
 
     @Override

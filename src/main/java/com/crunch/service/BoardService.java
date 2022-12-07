@@ -9,9 +9,13 @@ public interface BoardService {
 
     int selectCount();
 
+    List<BoardDTO> selectList(HashMap<String, Integer> hashMap);
+
     BoardDTO selectByPostID(int postID);
 
-    List<BoardDTO> selectList(HashMap<String, Integer> hashMap);
+    List<BoardDTO> selectNotice();
+
+    void hit(int postID);
 
     void insert(BoardDTO boardDTO);
 
