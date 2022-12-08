@@ -1,7 +1,9 @@
 package com.crunch.controller;
 
+import com.crunch.domain.BoardCommentList;
 import com.crunch.domain.BoardDTO;
 import com.crunch.domain.BoardList;
+import com.crunch.service.BoardCommentService;
 import com.crunch.service.BoardService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +21,14 @@ import java.util.List;
 public class BoardController {
 
     private BoardService service;
+    private BoardCommentService commentService;
+    private BoardCommentList boardCommentList;
+
 
     // 글 목록 불러오기
     @RequestMapping("/board")
     public String board(Model model,
-                        @RequestParam(value = "currentPage", required = false, defaultValue = "1") int currentPage
-    ) {
+                        @RequestParam(value = "currentPage", required = false, defaultValue = "1") int currentPage) {
 
         log.info("BoardController의 board() 실행");
 //        log.info("model: {}", model);
@@ -44,6 +48,13 @@ public class BoardController {
         hashMap.put("endNo", boardList.getEndNo());
         boardList.setList(service.selectList(hashMap));
 
+        for (BoardDTO boardDTO : notice) {
+            boardDTO.setCommentCount(commentService.commentCount(boardDTO.getPostID()));
+        }
+        for (BoardDTO boardDTO : boardList.getList()) {
+            boardDTO.setCommentCount(commentService.commentCount(boardDTO.getPostID()));
+        }
+
         model.addAttribute("notice", notice);
         model.addAttribute("boardList", boardList);
 //        log.info("{}", notice);
@@ -56,8 +67,7 @@ public class BoardController {
     @RequestMapping("/boardHit")
     public String boardHit(Model model,
                            @RequestParam("postID") int postID,
-                           @RequestParam("currentPage") int currentPage
-    ) {
+                           @RequestParam("currentPage") int currentPage) {
 
         log.info("BoardController의 boardHit() 실행");
 //        log.info("postID: {}, currentPage: {}", postID, currentPage);
@@ -74,17 +84,20 @@ public class BoardController {
     @RequestMapping("/boardView")
     public String boardSelectByPostID(Model model,
                                       @RequestParam("postID") int postID,
-                                      @RequestParam("currentPage") int currenPage
-    ) {
+                                      @RequestParam("currentPage") int currenPage) {
 
         log.info("BoardController의 boardView() 실행");
 //        log.info("postID: {}, currentPage: {}", postID, currenPage);
 
         BoardDTO boardDTO = service.selectByPostID(postID);
 
+        boardCommentList.setList(commentService.selectCommentList(postID));
+
         model.addAttribute("boardDTO", boardDTO);
         model.addAttribute("currentPage", currenPage);
         model.addAttribute("enter", "\r\n");
+        model.addAttribute("boardCommentList", boardCommentList);
+        boardDTO.setCommentCount(commentService.commentCount(postID));
 
         return "board/boardView";
     }

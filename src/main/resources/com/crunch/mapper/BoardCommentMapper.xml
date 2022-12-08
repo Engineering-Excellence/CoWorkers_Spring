@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crunch.mapper.BoardCommentMapper">
+
+    <!-- 댓글 목록을 얻어온다. -->
+    <select id="boardSelectCommentList" parameterType="int" resultType="commentDTO">
+        SELECT *
+        FROM BOARDCOMMENT
+        WHERE POSTID = #{postID}
+        ORDER BY COMMENTID DESC
+    </select>
+
+    <!-- 새 댓글을 저장한다. -->
+    <insert id="boardCommentInsert" parameterType="commentDTO">
+        INSERT INTO BOARDCOMMENT (COMMENTID, USERNAME, CONTENT, IP, POSTID, USERID)
+        VALUES (BOARDCOMMENT_COMMENTID_SEQ.nextval, #{userName}, #{content}, #{ip}, #{postID}, #{userID})
+    </insert>
+
+    <!-- 댓글을 삭제(블라인드 처리)한다. -->
+    <update id="boardCommentDelete" parameterType="int">
+        UPDATE BOARDCOMMENT
+        SET DELETEDATE = SYSDATE
+        WHERE COMMENTID = #{commentID}
+    </update>
+
+    <!-- 댓글을 수정한다. -->
+    <update id="boardCommentUpdate" parameterType="commentDTO">
+        UPDATE BOARDCOMMENT
+        SET CONTENT    = #{content}
+          , IP         = #{ip}
+          , UPDATEDATE = SYSDATE
+        WHERE COMMENTID = #{commentID}
+    </update>
+
+    <!-- 댓글 수를 얻어온다. -->
+    <select id="boardCommentCount" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM BOARDCOMMENT
+        WHERE POSTID = #{postID}
+          AND DELETEDATE IS NULL
+    </select>
+
+</mapper>

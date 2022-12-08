@@ -3,5 +3,6 @@
 <configuration>
     <typeAliases>
         <typeAlias alias="boardDTO" type="com.crunch.domain.BoardDTO"/>
+        <typeAlias alias="commentDTO" type="com.crunch.domain.BoardCommentDTO"/>
     </typeAliases>
 </configuration>

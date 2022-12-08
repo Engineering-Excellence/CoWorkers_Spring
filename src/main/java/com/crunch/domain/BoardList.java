@@ -1,10 +1,12 @@
 package com.crunch.domain;
 
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 @Data
 public class BoardList {
 
@@ -17,6 +19,9 @@ public class BoardList {
     private int endNo = 0;
     private int startPage = 0;
     private int endPage = 0;
+
+    public BoardList() {
+    }
 
     public BoardList(int pageSize, int totalCount, int currentPage) {
         this.pageSize = pageSize;
