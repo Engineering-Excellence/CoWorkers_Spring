@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crunch.mapper.UserInfoMapper">
+
+    <!-- Terry - userInfo(로그인, 회원가입) 관련 xml -->
+
+    <!-- 회원가입 데이터 입력 -->
+    <insert id="userInfoInsert" parameterType="userInfoDTO">
+        insert into UserInfo (userID, accountID, accountPassword, userName, registerNumber, mobileNumber, gender, email)
+        values (UserInfo_userID_seq.nextval, #{accountID}, #{accountPassword}, #{userName}, #{registerNumber},
+                #{mobileNumber}, #{gender}, #{email})
+    </insert>
+
+    <!-- 로그인 아이디 비교 -->
+    <select id="userInfoCompareID" parameterType="String" resultType="String">
+        select accountID
+        from UserInfo
+        where accountID = #{accountID, jdbcType=VARCHAR}
+    </select>
+
+    <!-- 로그인 패스워드 비교 -->
+    <select id="userInfoComparePW" parameterType="String" resultType="String">
+        select accountPassword
+        from UserInfo
+        where accountID = #{accountID, jdbcType=VARCHAR}
+    </select>
+
+    <select id="userInfoSelect" parameterType="userInfoDTO" resultType="userInfoDTO">
+        select userID,
+               accountID,
+               accountPassword,
+               userName,
+               registerNumber,
+               mobileNumber,
+               gender,
+               email,
+               joinDate,
+               retireDate,
+               positionCode
+        from UserInfo
+        where accountID = #{accountID, jdbcType=VARCHAR}
+    </select>
+    <!-- 회원가입시 아이디 / 주민등록번호 중복체크용 유저 리스트 뽑아오기 -->
+    <!-- <select id="userInfoSelectList" resultType="userInfoDTO">
+        select * from UserInfo where accountID = #{accountID}
+    </select> -->
+
+    <!-- 로그인 시 유저정보 가져오기 -->
+    <!-- <select id="userInfoSelectUser" parameterType="userInfoDTO" resultType="userInfoDTO">
+        select * from UserInfo where accountID = #{accountID}
+    </select> -->
+
+    <!-- (ID/PW 찾기 / 추후 업데이트)
+    ID찾기 이름 비교
+    <select id="userInfoCompareName" parameterType="userInfoDTO" resultType="String">
+        select userName from UserInfo where mobileNumber = #{mobileNumber}
+    </select>
+
+    ID찾기 이메일 비교
+    <select id="userInfoCompareEmail" parameterType="userInfoDTO" resultType="String">
+        select email from UserInfo where mobileNumber = #{mobileNumber}
+    </select>
+
+    ID찾기 아이디 가져오기
+    <select id="userInfoSelectUser" parameterType="String" resultType="userInfoDTO">
+        select * from userinfo where userName=#{userName} and email=#{email}
+    </select>
+
+    PW찾기 비밀번호 가져오기
+    <select id="userInfoSelectUser" parameterType="userInfoDTO" resultType="String">
+        select * from userinfo where accountID=#{accountID} and email=#{email}
+    </select>
+     -->
+</mapper>

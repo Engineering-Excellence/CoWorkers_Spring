@@ -4,5 +4,7 @@
     <typeAliases>
         <typeAlias alias="boardDTO" type="com.crunch.domain.BoardDTO"/>
         <typeAlias alias="commentDTO" type="com.crunch.domain.BoardCommentDTO"/>
+        <typeAlias alias="userInfoDTO" type="com.crunch.domain.UserInfoDTO"/>
+        <!--<typeAlias alias="wdto" type="com.crunch.domain.WorkDTO"/>-->
     </typeAliases>
 </configuration>

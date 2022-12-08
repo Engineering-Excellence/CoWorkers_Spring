@@ -16,17 +16,18 @@ import java.util.HashMap;
 import java.util.List;
 
 @Controller
-@Slf4j
 @AllArgsConstructor
+@Slf4j
 public class BoardController {
 
     private BoardService service;
     private BoardCommentService commentService;
+    private BoardList boardList;
     private BoardCommentList boardCommentList;
 
 
     // 글 목록 불러오기
-    @RequestMapping("/board")
+    @RequestMapping(value = "board")
     public String board(Model model,
                         @RequestParam(value = "currentPage", required = false, defaultValue = "1") int currentPage) {
 
@@ -40,7 +41,7 @@ public class BoardController {
 
         // 한 페이지 분량의 글과 페이징 작업에 사용할 변수 초기화
         List<BoardDTO> notice = service.selectNotice();
-        BoardList boardList = new BoardList(pageSize, totalCount, currentPage);
+        boardList = new BoardList(pageSize, totalCount, currentPage);
 
         // 한 페이지 분량의 글 목록을 얻어온다.
         HashMap<String, Integer> hashMap = new HashMap<>();
@@ -64,7 +65,7 @@ public class BoardController {
     }
 
     // 글 조회 수 증가
-    @RequestMapping("/boardHit")
+    @RequestMapping(value = "boardHit")
     public String boardHit(Model model,
                            @RequestParam("postID") int postID,
                            @RequestParam("currentPage") int currentPage) {
@@ -81,7 +82,7 @@ public class BoardController {
     }
 
     // 글 조회
-    @RequestMapping("/boardView")
+    @RequestMapping(value = "boardView")
     public String boardSelectByPostID(Model model,
                                       @RequestParam("postID") int postID,
                                       @RequestParam("currentPage") int currenPage) {
@@ -103,7 +104,7 @@ public class BoardController {
     }
 
     // 글쓰기 페이지 진입
-    @RequestMapping("/boardInsert")
+    @RequestMapping(value = "boardInsert")
     public String boardInsert(Model model) {
 
         log.info("BoardController의 boardInsert() 실행");
@@ -112,7 +113,7 @@ public class BoardController {
     }
 
     // 신규 글 작성
-    @RequestMapping("/boardInsertOK")
+    @RequestMapping(value = "boardInsertOK")
     public String boardInsertOK(Model model, BoardDTO boardDTO) {
 
         log.info("BoardController의 boardInsertOK() 실행");

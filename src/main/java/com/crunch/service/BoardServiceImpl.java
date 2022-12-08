@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public ArrayList<BoardDTO> selectNotice() {
+    public List<BoardDTO> selectNotice() {
 
         log.info("BoardServiceImpl의 selectNotice() 실행");
 
