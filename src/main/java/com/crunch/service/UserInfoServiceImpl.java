@@ -13,13 +13,16 @@ import java.util.List;
 @Slf4j
 public class UserInfoServiceImpl implements UserInfoService {
 
-    // 인스턴스 변수(=mapper)에 알맞은 타입의 객체(=BoardMapper)를 자동으로 주입하는 어노테이션
+    // 인스턴스 변수(mapper)에 알맞은 타입의 객체(UserInfoMapper)를 자동으로 주입하는 어노테이션
     @Setter(onMethod_ = @Autowired)
     private UserInfoMapper mapper;
 
     @Override
     public void userInfoInsert(UserInfoDTO userInfoDTO) {
 
+        log.info("UserInfoServiceImpl의 userInfoInsert() 실행");
+
+        mapper.userInfoInsert(userInfoDTO);
     }
 
     @Override

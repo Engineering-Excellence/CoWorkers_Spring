@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 import java.util.List;
 
@@ -36,41 +37,62 @@ public class UserInfoController {
 
         log.info("UserInfoController의 loginOK() 실행");
 
-        log.info("accountID: {}, accountPassword: {}", accountID, accountPassword);
         String originID = service.userInfoCompareID(accountID);
-        log.info("originID: {}", originID);
         String originPassword = service.userInfoComparePW(accountID);
-        log.info("originPassword: {}", originPassword);
 
-        if (accountID !=null && accountID.equals(originID)) {
-            log.info("accountID.equals(originID)");
-            if (accountPassword !=null && accountPassword.equals(originPassword)) {
-                log.info("accountPassword.equals(originPassword)");
+        if (accountID != null && accountID.equals(originID)) {
+//            log.info("accountID.equals(originID)");
+            if (accountPassword != null && accountPassword.equals(originPassword)) {
+//                log.info("accountPassword.equals(originPassword)");
 
                 userInfoDTO.setAccountID(accountID);
                 log.info("userInfoDTO: {}", userInfoDTO);
 
                 List<UserInfoDTO> userInfo = service.userInfoSelect(accountID);
+                log.info("userInfo: {}", userInfo);
 
                 model.addAttribute("userInfoDTO", userInfoDTO);
                 model.addAttribute("userInfo", userInfo);
-
-                log.info("userInfo: {}", userInfo);
                 log.info("model: {}", model);
-
 
                 return "userInfo/mainView";
             } else {
                 model.addAttribute("msg", "비밀번호가 일치하지 않습니다.");
-                return "userInfo/login";
+                return "redirect:/";
             }
         } else {
             model.addAttribute("msg", "아이디가 틀렸습니다.");
-            return "redirect:login";
+            return "redirect:/";
         }
 
     }
 
+    @RequestMapping(value = "logout")
+    public String logout(SessionStatus sessionStatus) {
 
+        log.info("UserInfoController의 logout() 실행");
+
+        sessionStatus.setComplete();    // 세션 제거
+
+        return "redirect:/";
+    }
+
+    @RequestMapping(value = "registerForm")
+    public String registerForm() {
+
+        log.info("UserInfoController의 registerForm() 실행");
+
+        return "userInfo/registerForm";
+    }
+
+    @RequestMapping(value = "registerOK")
+    public String registerOK(Model model, UserInfoDTO userInfoDTO) {
+
+        log.info("UserInfoController의 registerOK() 실행");
+
+        service.userInfoInsert(userInfoDTO);
+
+        return "redirect:/";
+    }
 
 }

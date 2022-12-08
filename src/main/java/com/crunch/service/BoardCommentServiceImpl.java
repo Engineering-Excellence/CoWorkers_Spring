@@ -13,7 +13,7 @@ import java.util.List;
 @Slf4j
 public class BoardCommentServiceImpl implements BoardCommentService {
 
-    // 인스턴스 변수(=mapper)에 알맞은 타입의 객체(=BoardCommentMapper)를 자동으로 주입하는 어노테이션
+    // 인스턴스 변수(mapper)에 알맞은 타입의 객체(BoardCommentMapper)를 자동으로 주입하는 어노테이션
     @Setter(onMethod_ = @Autowired)
     private BoardCommentMapper mapper;
 

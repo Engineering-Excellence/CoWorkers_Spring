@@ -32,8 +32,6 @@ public class BoardController {
                         @RequestParam(value = "currentPage", required = false, defaultValue = "1") int currentPage) {
 
         log.info("BoardController의 board() 실행");
-//        log.info("model: {}", model);
-//        log.info("currentPage: {}", currentPage);
 
         // 페이지 당 표시할 글 개수, 전체 글 개수 저장
         int pageSize = 10;
@@ -41,7 +39,7 @@ public class BoardController {
 
         // 한 페이지 분량의 글과 페이징 작업에 사용할 변수 초기화
         List<BoardDTO> notice = service.selectNotice();
-        boardList = new BoardList(pageSize, totalCount, currentPage);
+        boardList.initBoardList(pageSize, totalCount, currentPage);
 
         // 한 페이지 분량의 글 목록을 얻어온다.
         HashMap<String, Integer> hashMap = new HashMap<>();
@@ -58,8 +56,6 @@ public class BoardController {
 
         model.addAttribute("notice", notice);
         model.addAttribute("boardList", boardList);
-//        log.info("{}", notice);
-//        log.info("{}", boardList);
 
         return "board/board";
     }
@@ -71,7 +67,6 @@ public class BoardController {
                            @RequestParam("currentPage") int currentPage) {
 
         log.info("BoardController의 boardHit() 실행");
-//        log.info("postID: {}, currentPage: {}", postID, currentPage);
 
         service.hit(postID);
 
@@ -88,10 +83,8 @@ public class BoardController {
                                       @RequestParam("currentPage") int currenPage) {
 
         log.info("BoardController의 boardView() 실행");
-//        log.info("postID: {}, currentPage: {}", postID, currenPage);
 
         BoardDTO boardDTO = service.selectByPostID(postID);
-
         boardCommentList.setList(commentService.selectCommentList(postID));
 
         model.addAttribute("boardDTO", boardDTO);
@@ -105,7 +98,7 @@ public class BoardController {
 
     // 글쓰기 페이지 진입
     @RequestMapping(value = "boardInsert")
-    public String boardInsert(Model model) {
+    public String boardInsert() {
 
         log.info("BoardController의 boardInsert() 실행");
 
@@ -117,8 +110,6 @@ public class BoardController {
     public String boardInsertOK(Model model, BoardDTO boardDTO) {
 
         log.info("BoardController의 boardInsertOK() 실행");
-        log.info("model: {}", model);
-        log.info("boardDTO: {}", boardDTO);
 
         service.insert(boardDTO);
 

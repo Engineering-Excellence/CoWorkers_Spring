@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 public class BoardServiceImpl implements BoardService {
 
-    // 인스턴스 변수(=mapper)에 알맞은 타입의 객체(=BoardMapper)를 자동으로 주입하는 어노테이션
+    // 인스턴스 변수(mapper)에 알맞은 타입의 객체(BoardMapper)를 자동으로 주입하는 어노테이션
     @Setter(onMethod_ = @Autowired)
     private BoardMapper mapper;
 
@@ -61,7 +61,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void insert(BoardDTO boardDTO) {
 
-//        log.info("BoardServiceImpl의 insert() 실행");
+        log.info("BoardServiceImpl의 insert() 실행");
 
         log.info("insert({})", boardDTO);
         mapper.boardInsert(boardDTO);
