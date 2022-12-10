@@ -23,7 +23,7 @@ public class UserInfoController {
     private UserInfoDTO userInfoDTO;
 
     @RequestMapping(value = "/")
-    public String login(Model model) {
+    public String login() {
 
         log.info("UserInfoController의 login() 실행");
 
@@ -41,27 +41,27 @@ public class UserInfoController {
         String originPassword = service.userInfoComparePW(accountID);
 
         if (accountID != null && accountID.equals(originID)) {
-//            log.info("accountID.equals(originID)");
+
             if (accountPassword != null && accountPassword.equals(originPassword)) {
-//                log.info("accountPassword.equals(originPassword)");
 
                 userInfoDTO.setAccountID(accountID);
-                log.info("userInfoDTO: {}", userInfoDTO);
-
                 List<UserInfoDTO> userInfo = service.userInfoSelect(accountID);
-                log.info("userInfo: {}", userInfo);
 
                 model.addAttribute("userInfoDTO", userInfoDTO);
                 model.addAttribute("userInfo", userInfo);
-                log.info("model: {}", model);
 
                 return "userInfo/mainView";
             } else {
+
                 model.addAttribute("msg", "비밀번호가 일치하지 않습니다.");
+
                 return "redirect:/";
             }
+
         } else {
+
             model.addAttribute("msg", "아이디가 틀렸습니다.");
+
             return "redirect:/";
         }
 
@@ -86,7 +86,7 @@ public class UserInfoController {
     }
 
     @RequestMapping(value = "registerOK")
-    public String registerOK(Model model, UserInfoDTO userInfoDTO) {
+    public String registerOK(UserInfoDTO userInfoDTO) {
 
         log.info("UserInfoController의 registerOK() 실행");
 

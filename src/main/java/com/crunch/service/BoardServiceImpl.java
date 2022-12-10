@@ -70,7 +70,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public boolean update(BoardDTO boardDTO) {
 
-//        log.info("BoardServiceImpl의 update() 실행");
+        log.info("BoardServiceImpl의 update() 실행");
 
         return mapper.boardUpdate(boardDTO) == 1;
     }
@@ -78,7 +78,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public boolean delete(int postID) {
 
-//        log.info("BoardServiceImpl의 delete() 실행");
+        log.info("BoardServiceImpl의 delete() 실행");
 
         return mapper.boardDelete(postID) == 1;
     }

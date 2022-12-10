@@ -35,15 +35,25 @@ public class BoardCommentServiceImpl implements BoardCommentService {
 
     @Override
     public void commentInsert(BoardCommentDTO commentDTO) {
+
+        log.info("BoardCommentServiceImple의 commentInsert() 실행");
+
+        mapper.boardCommentInsert(commentDTO);
     }
 
     @Override
     public boolean commentDelete(int commentID) {
-        return false;
+
+        log.info("BoardCommentServiceImple의 commentDelete() 실행");
+
+        return mapper.boardCommentDelete(commentID) == 1;
     }
 
     @Override
     public boolean commentUpdate(BoardCommentDTO commentDTO) {
-        return false;
+
+        log.info("BoardCommentServiceImple의 commentUpdate() 실행");
+
+        return mapper.boardCommentUpdate(commentDTO) == 1;
     }
 }
