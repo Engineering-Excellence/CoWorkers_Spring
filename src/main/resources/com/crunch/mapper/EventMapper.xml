@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crunch.mapper.EventMapper">
+
+    <!-- 일정 1건 insert -->
+    <insert id="eventInsert" parameterType="eDTO">
+        insert into event (eventid,
+                           username,
+                           userid,
+                           subject,
+                           content,
+                           startdate,
+                           enddate,
+                           eventcolor,
+                           hit,
+                           ip,
+                           allday,
+                           commentcount)
+        values (event_idx_seq.nextval,
+                #{userName},
+                #{userID},
+                #{subject},
+                #{content},
+                #{startDate},
+                #{endDate},
+                #{eventColor},
+                0,
+                #{ip},
+                #{allDay},
+                0)
+    </insert>
+
+    <!-- 전체 글의 개수를 얻어온다. -->
+    <select id="eventSelectCount" resultType="int">
+        select count(*)
+        from event
+    </select>
+
+    <!-- 리스트 dto로 얻어온다. -->
+    <select id="eventSelectList" parameterType="java.util.HashMap" resultType="eDTO">
+		<![CDATA[
+        select *
+        from (select rownum rnum, GG.*
+              from (select *
+                    from event
+                    order by eventid desc) GG
+              where rownum <= #{endNo})
+        where rnum >= #{startNo}
+        ]]>
+	</select>
+
+    <!-- 페이징이 필요없는 리스트 dto로 얻어온다. -->
+    <select id="eventSelectArrayList" resultType="eDTO"> <!-- 리스트 표시 -->
+        select *
+        from event
+        order by eventid desc, endDate asc
+    </select>
+    <select id="selectEList" resultType="eDTO"> <!-- calendar 표시 -->
+        select *
+        from event
+        order by eventid asc
+    </select>
+
+    <!-- 페이징이 필요없는 리스트 dto로 얻어온다. -->
+    <select id="workSelectArrayList" resultType="com.crunch.domain.WorkDTO">
+        select *
+        from work
+        order by workID desc, deadline asc
+    </select>
+
+    <!-- eventSelectByEventID -->
+    <select id="eventSelectByEventID" parameterType="int" resultType="eDTO">
+        select *
+        from event
+        where eventid = #{eventID}
+    </select>
+
+    <!-- 1건의 일정을 수정한다. -->
+    <update id="eventUpdate" parameterType="eDTO">
+        update event
+        set subject    = #{subject},
+            content    = #{content},
+            startdate  = #{startDate},
+            enddate    = #{endDate},
+            eventcolor = #{eventColor},
+            ip         = #{ip},
+            allday     = #{allDay},
+            updateDate = sysdate
+        where eventID = #{eventID}
+    </update>
+
+    <update id="eventDelete" parameterType="int">
+        update event
+        set deletedate = sysdate
+        where eventID = #{eventID}
+    </update>
+
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crunch.mapper.WorkMapper">
+    <!--조우철 -->
+    <insert id="workInsert" parameterType="wDTO">
+        insert into work(workID, subject, userName, content, priority,
+                         currentProgress, workProgress,
+                         startDate, deadline, ip, admin, userID)
+        values (work_workID_seq.nextval, #{subject}, #{userName}, #{content}, #{priority},
+                #{currentProgress}, #{workProgress},
+                #{startDate}, #{deadline}, #{ip}, 0, #{userID})
+    </insert>
+
+    <select id="workSelectCount" resultType="int">
+        select count(*)
+        from work
+    </select>
+
+    <select id="workSelectList" parameterType="java.util.HashMap" resultType="wDTO">
+        <![CDATA[
+        SELECT *
+        FROM (SELECT rownum rnum, AA.*
+              FROM (SELECT * FROM work ORDER BY workID DESC) AA
+              WHERE rownum <= #{endNo})
+        WHERE rnum >= #{startNo}
+        ]]>
+    </select>
+
+    <select id="workSelectPriority" resultType="wDTO">
+        select *
+        from work
+        where priority = 1
+        order by workID desc
+    </select>
+
+    <select id="workSelectByWorkID" parameterType="int" resultType="wDTO">
+        select *
+        from work
+        where workID = #{workID}
+    </select>
+    <!--
+        <delete id="erase" parameterType="int">
+            delete
+            from work
+            where workID = #{workID}
+        </delete>
+    -->
+    <delete id="workDelete" parameterType="int">
+        begin
+        update work
+        set deleteDate = sysdate
+        where workID = #{workID};
+        commit;
+        end;
+    </delete>
+
+    <update id="workUpdate" parameterType="wDTO">
+        begin
+        update work
+        set subject         = #{subject},
+            content         = #{content},
+            priority        = #{priority},
+            currentProgress = #{currentProgress},
+            workProgress    = #{workProgress},
+            startDate       = #{startDate},
+            deadline        = #{deadline},
+            ip              = #{ip},
+            updateDate      = sysdate
+        where workID = #{workID};
+        commit;
+        end;
+    </update>
+</mapper>

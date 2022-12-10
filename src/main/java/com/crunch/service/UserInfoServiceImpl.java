@@ -18,7 +18,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     private UserInfoMapper mapper;
 
     @Override
-    public void userInfoInsert(UserInfoDTO userInfoDTO) {
+    public void insert(UserInfoDTO userInfoDTO) {
 
         log.info("UserInfoServiceImpl의 userInfoInsert() 실행");
 
@@ -26,7 +26,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public String userInfoCompareID(String accountID) {
+    public String compareID(String accountID) {
 
         log.info("UserInfoServiceImpl의 userInfoCompareID() 실행");
 
@@ -34,7 +34,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public String userInfoComparePW(String accountPassword) {
+    public String comparePW(String accountPassword) {
 
         log.info("UserInfoServiceImpl의 userInfoComparePW() 실행");
 
@@ -42,7 +42,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public List<UserInfoDTO> userInfoSelect(String accountID) {
+    public List<UserInfoDTO> select(String accountID) {
 
         log.info("UserInfoServiceImpl의 userInfoComparePW() 실행");
 

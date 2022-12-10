@@ -79,7 +79,7 @@ public class BoardController {
 
     // 게시글 조회
     @RequestMapping(value = "boardView")
-    public String boardSelectByPostID(Model model,
+    public String boardView(Model model,
                                       @RequestParam("postID") int postID,
                                       @RequestParam("currentPage") int currenPage) {
 

@@ -17,12 +17,13 @@ import java.util.List;
 @AllArgsConstructor
 @SessionAttributes("userInfo")
 @Slf4j
+@RequestMapping("/")
 public class UserInfoController {
 
     private UserInfoService service;
     private UserInfoDTO userInfoDTO;
 
-    @RequestMapping(value = "/")
+    @RequestMapping(value = "")
     public String login() {
 
         log.info("UserInfoController의 login() 실행");
@@ -37,15 +38,15 @@ public class UserInfoController {
 
         log.info("UserInfoController의 loginOK() 실행");
 
-        String originID = service.userInfoCompareID(accountID);
-        String originPassword = service.userInfoComparePW(accountID);
+        String originID = service.compareID(accountID);
+        String originPassword = service.comparePW(accountID);
 
         if (accountID != null && accountID.equals(originID)) {
 
             if (accountPassword != null && accountPassword.equals(originPassword)) {
 
                 userInfoDTO.setAccountID(accountID);
-                List<UserInfoDTO> userInfo = service.userInfoSelect(accountID);
+                List<UserInfoDTO> userInfo = service.select(accountID);
 
                 model.addAttribute("userInfoDTO", userInfoDTO);
                 model.addAttribute("userInfo", userInfo);
@@ -57,7 +58,6 @@ public class UserInfoController {
 
                 return "redirect:/";
             }
-
         } else {
 
             model.addAttribute("msg", "아이디가 틀렸습니다.");
@@ -90,7 +90,7 @@ public class UserInfoController {
 
         log.info("UserInfoController의 registerOK() 실행");
 
-        service.userInfoInsert(userInfoDTO);
+        service.insert(userInfoDTO);
 
         return "redirect:/";
     }

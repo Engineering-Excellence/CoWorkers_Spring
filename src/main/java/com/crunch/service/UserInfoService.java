@@ -6,12 +6,12 @@ import java.util.List;
 
 public interface UserInfoService {
 
-    void userInfoInsert(UserInfoDTO userInfoDTO);
+    void insert(UserInfoDTO userInfoDTO);
 
-    String userInfoCompareID(String accountID);
+    String compareID(String accountID);
 
-    String userInfoComparePW(String accountPassword);
+    String comparePW(String accountPassword);
 
-    List<UserInfoDTO> userInfoSelect(String accountID);
+    List<UserInfoDTO> select(String accountID);
 
 }
