@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crunch.mapper.FileMapper">
+
+    <!-- 전체 글의 개수를 불러온다. -->
+    <select id="fileSelectCount" resultType="int">
+        SELECT COUNT(*)
+        FROM "FILE"
+    </select>
+
+    <!-- 1 페이지 분량의 글 목록을 불러온다. -->
+    <select id="fileSelectList" parameterType="java.util.HashMap" resultType="fileDTO">
+        SELECT *
+        FROM (SELECT ROWNUM RNUM, AA.*
+              FROM (SELECT *
+                    FROM "FILE"
+                    ORDER BY FILEID DESC) AA)
+        WHERE RNUM BETWEEN #{startNo} AND #{endNo}
+    </select>
+
+    <!-- 새 글을 저장한다. -->
+    <insert id="fileInsert" parameterType="fileDTO">
+        INSERT INTO "FILE" (FILEID, SUBJECT, USERNAME, CONTENT, NOTICE, IP, USERID)
+        VALUES (FILE_FILEID_SEQ.nextval, #{subject}, #{userName}, #{content}, #{notice}, #{ip}, #{userID})
+    </insert>
+
+    <!-- 모든 공지글을 얻어온다. -->
+    <select id="fileSelectNotice" resultType="fileDTO">
+        SELECT *
+        FROM "FILE"
+        WHERE notice = 'true'
+        ORDER BY FILEID DESC
+    </select>
+
+    <!-- 조회수를 증가시킨다. -->
+    <update id="fileHit" parameterType="int">
+        UPDATE "FILE"
+        SET HIT = HIT + 1
+        WHERE FILEID = #{fileID}
+    </update>
+
+    <!-- 글 1건을 얻어온다. -->
+    <select id="fileSelectByFileID" parameterType="int" resultType="fileDTO">
+        SELECT *
+        FROM "FILE"
+        WHERE FILEID = #{fileID}
+    </select>
+
+    <!-- 글 1건을 삭제(블라인드 처리)한다. -->
+    <update id="fileDelete" parameterType="int">
+        UPDATE "FILE"
+        SET DELETEDATE = SYSDATE
+        WHERE FILEID = #{fileID}
+    </update>
+
+    <!-- 글 1건을 수정한다. -->
+    <update id="fileUpdate" parameterType="fileDTO">
+        UPDATE "FILE"
+        SET SUBJECT    = #{subject}
+          , CONTENT    = #{content}
+          , NOTICE     = #{notice}
+          , IP         = #{ip}
+          , UPDATEDATE = SYSDATE
+        WHERE FILEID = #{fileID}
+    </update>
+</mapper>

@@ -51,6 +51,7 @@
                 <li><a href="board.sil">게시글</a></li>
                 <li><a href="work.sil">업무관리</a></li>
                 <li><a href="event.sil">일정관리</a></li>
+                <li><a href="file">자료실</a></li>
             </ul>
         </div>
 

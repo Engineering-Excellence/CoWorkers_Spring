@@ -23,8 +23,8 @@ public class BoardController {
 
     private BoardService service;
     private BoardCommentService commentService;
-    private BoardList boardList;
-    private BoardCommentList boardCommentList;
+    private BoardList list;
+    private BoardCommentList commentList;
 
 
     // 게시글 목록 불러오기
@@ -40,24 +40,24 @@ public class BoardController {
 
         // 한 페이지 분량의 글과 페이징 작업에 사용할 변수 초기화
         List<BoardDTO> notice = service.selectNotice();
-        boardList.initBoardList(pageSize, totalCount, currentPage);
+        list.initBoardList(pageSize, totalCount, currentPage);
 
         // 한 페이지 분량의 글 목록을 얻어온다.
         HashMap<String, Integer> hashMap = new HashMap<>();
-        hashMap.put("startNo", boardList.getStartNo());
-        hashMap.put("endNo", boardList.getEndNo());
-        boardList.setList(service.selectList(hashMap));
+        hashMap.put("startNo", list.getStartNo());
+        hashMap.put("endNo", list.getEndNo());
+        list.setList(service.selectList(hashMap));
 
         // 댓글 수
         for (BoardDTO boardDTO : notice) {
             boardDTO.setCommentCount(commentService.commentCount(boardDTO.getPostID()));
         }
-        for (BoardDTO boardDTO : boardList.getList()) {
+        for (BoardDTO boardDTO : list.getList()) {
             boardDTO.setCommentCount(commentService.commentCount(boardDTO.getPostID()));
         }
 
         model.addAttribute("notice", notice);
-        model.addAttribute("boardList", boardList);
+        model.addAttribute("boardList", list);
 
         return "board/board";
     }
@@ -81,19 +81,19 @@ public class BoardController {
     // 게시글 조회
     @RequestMapping(value = "boardView")
     public String boardView(Model model,
-                                      @RequestParam("postID") int postID,
-                                      @RequestParam("currentPage") int currenPage) {
+                            @RequestParam("postID") int postID,
+                            @RequestParam("currentPage") int currenPage) {
 
         log.info("BoardController의 boardView() 실행");
 
         BoardDTO boardDTO = service.selectByPostID(postID);
         boardDTO.setCommentCount(commentService.commentCount(postID));
-        boardCommentList.setList(commentService.selectCommentList(postID));
+        commentList.setList(commentService.selectCommentList(postID));
 
         model.addAttribute("boardDTO", boardDTO);
         model.addAttribute("currentPage", currenPage);
         model.addAttribute("enter", "\r\n");
-        model.addAttribute("boardCommentList", boardCommentList);
+        model.addAttribute("boardCommentList", commentList);
 
         return "board/boardView";
     }

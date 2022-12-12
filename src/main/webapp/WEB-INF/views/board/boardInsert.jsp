@@ -75,6 +75,7 @@
             <li><a href="board">게시글</a></li>
             <li><a href="work">업무관리</a></li>
             <li><a href="event">일정관리</a></li>
+              <li><a href="file">자료실</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">

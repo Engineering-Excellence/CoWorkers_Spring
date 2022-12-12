@@ -8,21 +8,21 @@ import java.util.List;
 
 public interface EventMapper {
 
-    void insert(EventDTO eventDTO);
+    void eventInsert(EventDTO eventDTO);
 
-    int selectCount();
+    int eventSelectCount();
 
-    List<EventDTO> selectList(HashMap<String, Integer> hashMap);
+    List<EventDTO> eventSelectList(HashMap<String, Integer> hashMap);
 
-    List<EventDTO> selectEList();
+    List<EventDTO> eventSelectEList();
 
-    List<WorkDTO> selectWList();
+    List<WorkDTO> eventSelectWList();
 
-    EventDTO selectByEventID(int eventID);
+    EventDTO eventSelectByEventID(int eventID);
 
-    boolean update(EventDTO eventDTO);
+    int eventUpdate(EventDTO eventDTO);
 
-    boolean delete(int eventID);
+    int eventDelete(int eventID);
 
     // 페이징 작업이 필요한 경우의 selectList
 //	List<EventDTO> selectArrayList();

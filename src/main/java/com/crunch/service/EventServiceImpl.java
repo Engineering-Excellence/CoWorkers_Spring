@@ -23,7 +23,7 @@ public class EventServiceImpl implements EventService {
         log.info("EventServiceImpl의 insert() 실행");
 
         log.info("insert : {}", eventDTO);
-        mapper.insert(eventDTO);
+        mapper.eventInsert(eventDTO);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class EventServiceImpl implements EventService {
 
         log.info("EventServiceImpl의 selectCount() 실행");
 
-        return mapper.selectCount();
+        return mapper.eventSelectCount();
     }
 
 
@@ -40,7 +40,7 @@ public class EventServiceImpl implements EventService {
 
         log.info("EventServiceImpl의 selectEList() 실행");
 
-        return mapper.selectEList();
+        return mapper.eventSelectEList();
     }
 
     @Override
@@ -48,27 +48,27 @@ public class EventServiceImpl implements EventService {
 
         log.info("EventServiceImpl의 selectEList() 실행");
 
-        return mapper.selectWList();
+        return mapper.eventSelectWList();
     }
 
     @Override
     public EventDTO selectByEventID(int eventID) {
-        return mapper.selectByEventID(eventID);
+        return mapper.eventSelectByEventID(eventID);
     }
 
     @Override
     public boolean update(EventDTO eventDTO) {
-        return mapper.update(eventDTO);
+        return mapper.eventUpdate(eventDTO) == 1;
     }
 
     @Override
     public boolean delete(int eventID) {
-        return mapper.delete(eventID);
+        return mapper.eventDelete(eventID) == 1;
     }
 
     // 페이징 작업이 필요한 경우 작성. (댓글 기능 추가시)
 //    @Override
-//    public List<EventDTO> selectArrayList() {
+//    public List<EventDTO> eventSelectArrayList() {
 //        return null;
 //    }
 

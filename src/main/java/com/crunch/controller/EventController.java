@@ -52,9 +52,9 @@ public class EventController {
 			 		]
 			 	]}
 			 */
-        result.append("{\"eList\":[");	//json 시작부분
+        result.append("{\"eList\":[");    //json 시작부분
 //		데이터의 개수만큼 반복하며 json 형태의 문자열을 만든다.
-        for(EventDTO eDTO : eList) {
+        for (EventDTO eDTO : eList) {
             result.append("[{\"eventID\":\"").append(eDTO.getEventID()).append("\"}, ");
             result.append("{\"startDate\":\"").append(eDTO.getStartDate()).append("\"}, ");
             result.append("{\"endDate\":\"").append(eDTO.getEndDate()).append("\"}, ");
@@ -63,7 +63,7 @@ public class EventController {
             result.append("{\"deleteDate\":\"").append(eDTO.getDeleteDate()).append("\"}, ");
             result.append("{\"writeDate\":\"").append(eDTO.getWriteDate()).append("\"}], ");
         }
-        result.append("]}");	//json 끝부분
+        result.append("]}");    //json 끝부분
 
 //		StringBuffer 타입의 객체를 String 타입으로 리턴시키기 위해
 //		toString()  메서드를 실행하여 리턴시킨다.
