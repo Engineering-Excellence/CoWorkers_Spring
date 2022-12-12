@@ -14,8 +14,8 @@
 <head>
     <meta charset="UTF-8">
 
-    <link rel="icon" href="/images/favicon_16.png">
     <title>Event</title>
+    <link rel="icon" href="/images/favicon_16.png">
 
     <link href="/css/event.css" rel="stylesheet">
     <link href="/css/bootstrap.min.css" rel="stylesheet">

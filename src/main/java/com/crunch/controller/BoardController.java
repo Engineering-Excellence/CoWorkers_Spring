@@ -48,6 +48,7 @@ public class BoardController {
         hashMap.put("endNo", boardList.getEndNo());
         boardList.setList(service.selectList(hashMap));
 
+        // 댓글 수
         for (BoardDTO boardDTO : notice) {
             boardDTO.setCommentCount(commentService.commentCount(boardDTO.getPostID()));
         }
@@ -180,6 +181,7 @@ public class BoardController {
                 commentService.commentUpdate(boardCommentDTO);
                 break;
             default:
+                log.info("잘못된 요청: wrongMode");
                 break;
         }
 
