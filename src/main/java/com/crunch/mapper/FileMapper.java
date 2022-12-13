@@ -22,5 +22,6 @@ public interface FileMapper {
     int fileDelete(int fileID);
 
     int fileUpdate(FileDTO fileDTO);
-    
+
+    void fileDownloadCount(FileDTO fileDTO);
 }

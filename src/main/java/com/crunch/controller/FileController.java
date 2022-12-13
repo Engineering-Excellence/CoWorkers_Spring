@@ -5,13 +5,24 @@ import com.crunch.domain.FileList;
 import com.crunch.service.FileService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @AllArgsConstructor
@@ -20,6 +31,7 @@ public class FileController {
 
     private FileService service;
     private FileList list;
+    private FileDTO fileDTO;
 
     @RequestMapping("file")
     public String file(Model model,
@@ -67,9 +79,9 @@ public class FileController {
                            @RequestParam("fileID") int fileID,
                            @RequestParam("currentPage") int currenPage) {
 
-        log.info("fileController의 fileView() 실행");
+        log.info("FileController의 fileView() 실행");
 
-        FileDTO fileDTO = service.selectByFileID(fileID);
+        fileDTO = service.selectByFileID(fileID);
 
         model.addAttribute("fileDTO", fileDTO);
         model.addAttribute("currentPage", currenPage);
@@ -78,6 +90,104 @@ public class FileController {
         return "file/fileView";
     }
 
+    @RequestMapping("fileUploadForm")
+    public String fileUploadForm() {
 
+        log.info("FileController의 fileUploadForm() 실행");
+
+        return "file/fileUploadForm";
+    }
+
+    @RequestMapping("fileUploadFormAction")
+    public String fileUploadFormAction(@RequestParam Map<String, Object> map,
+                                       @RequestParam("uploadFile") MultipartFile[] uploadFile) {
+
+        log.info("FileController의 fileUploadFormAction() 실행");
+
+        String uploadFolder = "/Users/kyle/Documents/Study/CRUNCH/CoWorkers_Spring/upload";
+
+        for (MultipartFile multipartFile : uploadFile) {
+
+            log.info("-----------------------------------------------------------------------------------------------");
+            log.info("fileName: {}", multipartFile.getOriginalFilename());
+            log.info("fileSize: {}", multipartFile.getSize());
+
+            File saveFile = new File(uploadFolder, multipartFile.getOriginalFilename());
+
+            try {
+                multipartFile.transferTo(saveFile);
+            } catch (Exception ignored) {
+            }
+
+            fileDTO.setUserName((String) map.get("userName"));
+            fileDTO.setSubject((String) map.get("subject"));
+            fileDTO.setContent((String) map.get("content"));
+            fileDTO.setFileName(multipartFile.getOriginalFilename());
+            if (map.get("notice") != null) {
+                fileDTO.setNotice((String) map.get("notice"));
+            }
+            fileDTO.setIp((String) map.get("ip"));
+            fileDTO.setUserID(Integer.parseInt((String) map.get("userID")));
+        }
+
+        service.insert(fileDTO);
+
+        return "redirect:file";
+    }
+
+    /*@RequestMapping(value = "fileUploadAjax")
+    public String fileUploadAjax() {
+
+        log.info("FileController의 fileUploadAjax() 실행");
+
+        return "fileUploadForm";
+    }
+
+    @PostMapping("fileUploadAjaxAction")
+    public String fileUploadAjaxAction(MultipartFile[] fileName) {
+
+        log.info("FileController의 fileUploadAjaxAction() 실행");
+
+        String uploadFolder = "/Users/kyle/Documents/Study/CRUNCH/CoWorkers_Spring/upload";
+
+        for (MultipartFile multipartFile : fileName) {
+
+            log.info("-----------------------------------------------------------------------------------------------");
+            log.info("fileName: {}", multipartFile.getOriginalFilename());
+            log.info("fileSize: {}", multipartFile.getSize());
+
+            String originalFileName = multipartFile.getOriginalFilename();
+
+            // IE has file path
+            originalFileName = originalFileName.substring(originalFileName.lastIndexOf("/") + 1);
+            log.info("fileRealName: {}", originalFileName);
+
+            File fileRealName = new File(uploadFolder, originalFileName);
+
+            try {
+                multipartFile.transferTo(fileRealName);
+            } catch (Exception ignored) {
+            }
+        }
+
+        return "redirect:file";
+    }*/
+
+    @RequestMapping(value = "fileDownload", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Resource> fileDownload(FileDTO fileDTO) {
+
+        log.info("FileController의 fileDownload() 실행");
+
+        Resource resource = new FileSystemResource("/Users/kyle/Documents/Study/CRUNCH/CoWorkers_Spring/upload/" + fileDTO.getFileName());
+        String resourceName = resource.getFilename();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; fileName=" + new String(resourceName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
+
+        service.downloadCount(fileDTO);
+
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
 
 }

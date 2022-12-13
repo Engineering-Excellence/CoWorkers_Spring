@@ -23,4 +23,5 @@ public interface FileService {
 
     boolean delete(int fileID);
 
+    void downloadCount(FileDTO fileDTO);
 }

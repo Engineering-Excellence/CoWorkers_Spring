@@ -60,6 +60,9 @@ public class FileServiceImpl implements FileService {
     @Override
     public void insert(FileDTO fileDTO) {
 
+        log.info("FileServiceImpl의 insert() 실행");
+
+        mapper.fileInsert(fileDTO);
     }
 
     @Override
@@ -70,6 +73,14 @@ public class FileServiceImpl implements FileService {
     @Override
     public boolean delete(int fileID) {
         return false;
+    }
+
+    @Override
+    public void downloadCount(FileDTO fileDTO) {
+
+        log.info("FileServiceImpl의 downloadCount() 실행");
+
+        mapper.fileDownloadCount(fileDTO);
     }
 
 }

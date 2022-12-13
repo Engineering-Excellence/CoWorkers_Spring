@@ -266,7 +266,7 @@
                     <tr>
                         <td colspan="5" align="right">
                             <input type="button" class="btn btn-primary btn-sm" value="글쓰기"
-                                   onclick="location.href='fileInsert'">
+                                   onclick="location.href='fileUploadForm'">
                         </td>
                     </tr>
                     </tbody>

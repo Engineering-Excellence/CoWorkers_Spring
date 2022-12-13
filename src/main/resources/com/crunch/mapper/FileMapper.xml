@@ -20,8 +20,8 @@
 
     <!-- 새 글을 저장한다. -->
     <insert id="fileInsert" parameterType="fileDTO">
-        INSERT INTO "FILE" (FILEID, SUBJECT, USERNAME, CONTENT, NOTICE, IP, USERID)
-        VALUES (FILE_FILEID_SEQ.nextval, #{subject}, #{userName}, #{content}, #{notice}, #{ip}, #{userID})
+        INSERT INTO "FILE" (FILEID, SUBJECT, USERNAME, CONTENT, FILENAME, NOTICE, IP, USERID)
+        VALUES (FILE_FILEID_SEQ.nextval, #{subject}, #{userName}, #{content}, #{fileName}, #{notice}, #{ip}, #{userID})
     </insert>
 
     <!-- 모든 공지글을 얻어온다. -->
@@ -62,5 +62,13 @@
           , IP         = #{ip}
           , UPDATEDATE = SYSDATE
         WHERE FILEID = #{fileID}
+    </update>
+
+    <!-- 다운로드 횟수를 증가시킨다. -->
+    <update id="fileDownloadCount" parameterType="fileDTO">
+        UPDATE "FILE"
+        SET DOWNLOADCOUNT = DOWNLOADCOUNT + 1
+        WHERE FILEID = #{fileID}
+          AND FILENAME = #{fileName}
     </update>
 </mapper>

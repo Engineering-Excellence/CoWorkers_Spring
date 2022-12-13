@@ -1,4 +1,5 @@
 <%@ page import="java.util.Map" %>
+<%@ page import="java.net.URLEncoder" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -121,6 +122,20 @@
                         </td>
                     </tr>
                     <tr>
+                        <th style="text-align: center">파일</th>
+                        <td colspan="3">
+                            <c:if test="${fileDTO.deleteDate == null && fileDTO.fileName != null}">
+                                <c:set var="subject" value="${fn:replace(fileDTO.subject, '<', '&lt;')}"/>
+                                <c:set var="subject" value="${fn:replace(subject, '>', '&gt;')}"/>
+                                <a href="/fileDownload?fileID=${fileDTO.fileID}&fileName=${fileDTO.fileName}">
+                                        ${fileDTO.fileName}
+                                </a>
+                                (다운로드 횟수: ${fileDTO.downloadCount}번)
+                                <br/>
+                            </c:if>
+                        </td>
+                    </tr>
+                    <tr>
                         <th class="align-middle" style="text-align: center; height: 300px;">내용</th>
                         <td colspan="3">
                             <c:if test="${fileDTO.deleteDate == null}">
@@ -161,8 +176,8 @@
 
             <hr style="margin-left: auto; margin-right: auto;"/>
 
-                </table>
-                <input type="hidden" id="userID" name="userID" value="${userInfo.get(0).getUserID()}">
+            </table>
+            <input type="hidden" id="userID" name="userID" value="${userInfo.get(0).getUserID()}">
             </form>
         </div>
     </div>
