@@ -67,7 +67,10 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public boolean update(FileDTO fileDTO) {
-        return false;
+
+        log.info("FileServiceImpl의 update() 실행");
+
+        return mapper.fileUpdate(fileDTO) == 1;
     }
 
     @Override

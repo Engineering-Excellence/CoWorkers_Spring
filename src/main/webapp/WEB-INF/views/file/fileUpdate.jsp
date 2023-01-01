@@ -82,64 +82,74 @@
             <div class="table-responsive">
 
                 <!-- 글 작성 부분 -->
-                <form class="m-" action="fileUploadFormAction" method="post" enctype="multipart/form-data">
-                <table class="table table-striped" style="width:1500px; margin-left: auto; margin-right: auto;">
-                    <tr class="table-primary">
-                        <th colspan="15" style="font-size: 30px; text-align: center;">자료글 작성</th>
-                    </tr>
+                <form class="m-" action="fileUpdateOK" method="post" enctype="multipart/form-data">
+                    <table class="table table-striped" style="width:1500px; margin-left: auto; margin-right: auto;">
+                        <tr class="table-primary">
+                            <th colspan="15" style="font-size: 30px; text-align: center;">자료글 수정</th>
+                        </tr>
 
-                    <tr>
-                        <th class="align-middle table-dark">제목
-                        </th>
-                        <td colspan="2">
-                            <input id="subject" type="text" class="form-control form-control-sm" name="subject"/>
-                        </td>
-                    </tr>
+                        <tr>
+                            <th class="align-middle table-dark">제목
+                            </th>
+                            <td colspan="2">
+                                <input id="subject" type="text" class="form-control form-control-sm" name="subject"
+                                       value="${fileDTO.subject}"/>
+                            </td>
+                        </tr>
 
-                    <tr>
-                        <th class="align-middle table-dark">이름
-                        </th>
-                        <td>
-                            <input id="userName" type="text" class="form-control form-control-sm" name="userName"
-                                   style="width: 80%" value="${userInfo.get(0).getUserName()}" readonly/>
-                        </td>
+                        <tr>
+                            <th class="align-middle table-dark">이름
+                            </th>
+                            <td>
+                                <input id="userName" type="text" class="form-control form-control-sm" name="userName"
+                                       style="width: 80%" value="${userInfo.get(0).getUserName()}" readonly/>
+                            </td>
 
-                        <!-- 공지글 여부 -->
-                        <th class="align-left table-dark">
-                            공지글 <input class="form-check-input" type="checkbox" name="notice" value="true">
-                        </th>
-                    </tr>
+                            <!-- 공지글 여부 -->
+                            <th class="align-left table-dark">
+                                <c:if test="${fileDTO.notice == 'true'}">
+                                    공지글 <input class="form-check-input" type="checkbox" name="notice" value="true"
+                                               checked="checked">
+                                </c:if>
+                                <c:if test="${fileDTO.notice != 'true'}">
+                                    공지글 <input class="form-check-input" type="checkbox" name="notice" value="true">
+                                </c:if>
+                            </th>
+                        </tr>
 
-                    <tr>
-                        <th class="align-middle table-dark">내용
-                        </th>
-                        <td colspan="2">
+                        <tr>
+                            <th class="align-middle table-dark">내용
+                            </th>
+                            <td colspan="2">
                 <textarea id="content" class="form-control form-control-sm" rows="10" name="content"
-                          style="resize: none"></textarea>
-                        </td>
-                    </tr>
+                          style="resize: none">${fileDTO.content}</textarea>
+                            </td>
+                        </tr>
 
-                    <tr class="uploadTr">
-                        <th class="align-middle table-dark">파일첨부
-                        <td colspan="2">
-                            <input type="file" name="uploadFile" multiple="multiple">
-                        </td>
-                    </tr>
+                        <tr class="uploadTr">
+                            <th class="align-middle table-dark">파일첨부
+                            <td colspan="2">
+                                ${fileDTO.fileName}
+                                <input type="file" name="uploadFile" multiple="multiple">
+                            </td>
+                        </tr>
 
-                    <tr class="table-secondary">
-                        <td colspan="3" align="center">
-                            <%--<button id="uploadBtn" class="btn btn-primary btn-sm" type="button" style="font-size: 13px">저장하기</button>--%>
-                                <input type="submit" class="btn btn-primary btn-sm" value="저장하기" style="font-size: 13px"/>
-                            <input class="btn btn-danger btn-sm" type="reset" value="다시쓰기" style="font-size: 13px"/>
-                            <input class="btn btn-info btn-sm" type="button" value="돌아가기" style="font-size: 13px"
-                                   onclick="history.back()"/>
-                        </td>
-                    </tr>
+                        <tr class="table-secondary">
+                            <td colspan="3" align="center">
+                                <%--<button id="uploadBtn" class="btn btn-primary btn-sm" type="button" style="font-size: 13px">저장하기</button>--%>
+                                <input type="submit" class="btn btn-primary btn-sm" value="저장하기"
+                                       style="font-size: 13px"/>
+                                <input class="btn btn-danger btn-sm" type="reset" value="다시쓰기" style="font-size: 13px"/>
+                                <input class="btn btn-info btn-sm" type="button" value="돌아가기" style="font-size: 13px"
+                                       onclick="history.back()"/>
+                            </td>
+                        </tr>
 
-                </table>
+                    </table>
 
-                <input type="hidden" name="ip" value="${pageContext.request.remoteAddr}"/>
-                <input type="hidden" name="userID" value="${userInfo.get(0).getUserID()}">
+                    <input type="hidden" name="ip" value="${pageContext.request.remoteAddr}"/>
+                    <input type="hidden" name="fileID" value="${fileDTO.fileID}">
+                    <input type="hidden" name="currentPage" value="${currentPage}"/>
                 </form>
             </div>
         </div>

@@ -7,16 +7,15 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpHeaders;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -33,7 +32,8 @@ public class FileController {
     private FileList list;
     private FileDTO fileDTO;
 
-    @RequestMapping("file")
+    // 자료실 목록 호출
+    @GetMapping("file")
     public String file(Model model,
                        @RequestParam(value = "currentPage", required = false, defaultValue = "1") int currentPage) {
 
@@ -59,7 +59,8 @@ public class FileController {
         return "file/file";
     }
 
-    @RequestMapping(value = "fileHit")
+    // 자료실 글 조회수 증가
+    @GetMapping(value = "fileHit")
     public String fileHit(Model model,
                           @RequestParam("fileID") int fileID,
                           @RequestParam("currentPage") int currentPage) {
@@ -74,23 +75,25 @@ public class FileController {
         return "redirect:fileView";
     }
 
-    @RequestMapping(value = "fileView")
+    // 자료실 글 보기
+    @GetMapping(value = "fileView")
     public String fileView(Model model,
                            @RequestParam("fileID") int fileID,
-                           @RequestParam("currentPage") int currenPage) {
+                           @RequestParam("currentPage") int currentPage) {
 
         log.info("FileController의 fileView() 실행");
 
         fileDTO = service.selectByFileID(fileID);
 
         model.addAttribute("fileDTO", fileDTO);
-        model.addAttribute("currentPage", currenPage);
+        model.addAttribute("currentPage", currentPage);
         model.addAttribute("enter", "\r\n");
 
         return "file/fileView";
     }
 
-    @RequestMapping("fileUploadForm")
+    // 자료실 파일 업로드 페이지 호출(Form)
+    @GetMapping("fileUploadForm")
     public String fileUploadForm() {
 
         log.info("FileController의 fileUploadForm() 실행");
@@ -98,7 +101,8 @@ public class FileController {
         return "file/fileUploadForm";
     }
 
-    @RequestMapping("fileUploadFormAction")
+    // 자료실 파일 업로드(Form)
+    @PostMapping("fileUploadFormAction")
     public String fileUploadFormAction(@RequestParam Map<String, Object> map,
                                        @RequestParam("uploadFile") MultipartFile[] uploadFile) {
 
@@ -135,7 +139,8 @@ public class FileController {
         return "redirect:file";
     }
 
-    /*@RequestMapping(value = "fileUploadAjax")
+    // 자료실 파일 업로드 페이지 호출(AJAX)
+    /*@GetMapping(value = "fileUploadAjax")
     public String fileUploadAjax() {
 
         log.info("FileController의 fileUploadAjax() 실행");
@@ -143,6 +148,7 @@ public class FileController {
         return "fileUploadForm";
     }
 
+    // 자료실 파일 업로드(AJAX)
     @PostMapping("fileUploadAjaxAction")
     public String fileUploadAjaxAction(MultipartFile[] fileName) {
 
@@ -173,7 +179,8 @@ public class FileController {
         return "redirect:file";
     }*/
 
-    @RequestMapping(value = "fileDownload", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    // 자료실 파일 다운로드
+    /*@GetMapping(value = "fileDownload", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<Resource> fileDownload(FileDTO fileDTO) {
 
@@ -188,6 +195,81 @@ public class FileController {
         service.downloadCount(fileDTO);
 
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }*/
+
+    @GetMapping(value = "fileDownload")
+    public String fileDownload(Model model, FileDTO fileDTO,
+                               @RequestParam("currentPage") int currentPage) {
+
+        log.info("FileController의 fileDownload() 실행 → fileDTO: {}", fileDTO);
+
+        download(fileDTO);
+
+        log.info("fileDTO: {}", fileDTO);
+        service.downloadCount(fileDTO);
+
+        log.info("fileDTO: {}", fileDTO);
+        model.addAttribute("fileID", fileDTO.getFileID());
+        model.addAttribute("currentPage", currentPage);
+
+        return "redirect:fileDownloadOK";
+    }
+
+    @GetMapping(value = "fileDownloadOK")
+    public String fileDownloadOK(Model model,
+                                 @RequestParam("fileID") int fileID,
+                                 @RequestParam("currentPage") int currentPage) {
+
+        log.info("fileDownloadOK()");
+
+        model.addAttribute("fileID",fileID);
+        model.addAttribute("currentPage", currentPage);
+
+        return "redirect:fileView";
+    }
+
+    private ResponseEntity<Resource> download(FileDTO fileDTO) {
+
+        log.info("FileController의 download() 실행 → fileDTO: {}", fileDTO);
+
+        Resource resource = new FileSystemResource("/Users/kyle/Documents/Study/CRUNCH/CoWorkers_Spring/upload/" + fileDTO.getFileName());
+        String resourceName = resource.getFilename();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; fileName=" + new String(resourceName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
+
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
+
+    // 자료실 파일 글 수정 페이지 호출
+    @GetMapping(value = "fileUpdate")
+    public String fileUpdate(Model model,
+                             @RequestParam("fileID") int fileID,
+                             @RequestParam("currentPage") int currentPage) {
+
+        log.info("FileController의 fileUpdate() 실행");
+
+        fileDTO = service.selectByFileID(fileID);
+
+        model.addAttribute("fileDTO", fileDTO);
+        model.addAttribute("currentPage", currentPage);
+
+        return "file/fileUpdate";
+    }
+
+    // 자료실 글 수정
+    @PostMapping(value = "fileUpdateOK")
+    public String fileUpdateOK(Model model, FileDTO fileDTO,
+                               @RequestParam("currentPage") int currentPage) {
+
+        log.info("FileController의 fileUpdateOK() 실행");
+
+        service.update(fileDTO);
+
+        model.addAttribute("fileID", fileDTO.getFileID());
+        model.addAttribute("currentPage", currentPage);
+
+        return "redirect:fileView";
     }
 
 }

@@ -74,12 +74,12 @@
             </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h1 class="page-header">게시판</h1>
+            <h1 class="page-header">자료실</h1>
 
             <div class="table table-responsive">
                 <table class="table table-striped" style="width: 100%; margin-left: auto; margin-right: auto;">
                     <tr class="table-primary">
-                        <th colspan="4" style="font-size: 30px; text-align: center;">게시글 보기</th>
+                        <th colspan="4" style="font-size: 30px; text-align: center;">자료글 보기</th>
                     </tr>
                     <tr class="table-dark">
                         <th style="width: 100px; text-align: center;">글번호</th>
