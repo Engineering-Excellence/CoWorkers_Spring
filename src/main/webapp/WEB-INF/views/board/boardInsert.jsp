@@ -1,5 +1,4 @@
 <%@ page import="java.util.Map" %>
-<%@ page import="java.util.Iterator" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -36,46 +35,45 @@
     System.out.println(pageContext.findAttribute("boardDTO"));
 
     Map<String, String[]> map = request.getParameterMap();
-    Iterator<Map.Entry<String, String[]>> itr = map.entrySet().iterator();
-    while (itr.hasNext()) {
-        Map.Entry<String, String[]> entry = itr.next();
-        System.out.println(String.format("%s : %s", entry.getKey(), String.join(", ", entry.getValue())));
+    for (Map.Entry<String, String[]> entry : map.entrySet()) {
+        System.out.printf("%s : %s%n", entry.getKey(), String.join(", ", entry.getValue()));
     }
 
 %>
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
+    <div class="container-fluid">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="mainView">coWorkers</a>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="mainView">coWorkers</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">프로필</a></li>
-            <li><a href="#">환경설정</a></li>
-            <li><a href="logout">로그아웃</a></li>
-          </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">프로필</a></li>
+                <li><a href="#">환경설정</a></li>
+                <li><a href="logout">로그아웃</a></li>
+            </ul>
+            <form class="navbar-form navbar-right">
+                <input type="text" class="form-control" placeholder="Search...">
+            </form>
         </div>
-      </div>
-    </nav>
+    </div>
+</nav>
 
-    <div class="container-fluid">
-      <div class="row">
+<div class="container-fluid">
+    <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
-          <ul class="nav nav-sidebar">
-            <li><a href="board">게시글</a></li>
-            <li><a href="work">업무관리</a></li>
-            <li><a href="event">일정관리</a></li>
-          </ul>
+            <ul class="nav nav-sidebar">
+                <li><a href="board">게시글</a></li>
+                <li><a href="work">업무관리</a></li>
+                <li><a href="event">일정관리</a></li>
+            </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">게시판</h1>
@@ -107,7 +105,8 @@
 
                             <!-- 공지글 여부 -->
                             <th class="align-left table-dark">
-                                공지글 <input class="form-check-input" type="checkbox" name="notice" value="true">
+                                공지글 <input id="notice" class="form-check-input" type="checkbox" name="notice"
+                                           value="true">
                             </th>
                         </tr>
 
@@ -118,6 +117,18 @@
                 <textarea id="content" class="form-control form-control-sm" rows="10" name="content"
                           style="resize: none"></textarea>
                             </td>
+                        </tr>
+
+                        <tr>
+                            <th class="align-middle table-dark">파일첨부</th>
+                            <td colspan="2"><input type="file" name="uploadFile" multiple/></td>
+                            <%--                            <td><button id="uploadBtn">업로드</button></td>--%>
+
+                            <div class="uploadResult">
+                                <ul>
+
+                                </ul>
+                            </div>
                         </tr>
 
                         <tr class="table-secondary">
@@ -141,6 +152,102 @@
 
 <script type="text/javascript" src="/js/jquery-3.6.1.min.js"></script>
 <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script>
+    // 파일 업로드 AJAX
+    $(document).ready(function (e) {
+
+        // 기본 이벤트 제거
+        let formObj = $("form[role='form']")
+        $("button[type='submit']").on('click', function (e) {
+            e.preventDefault()
+            console.log('submit clicked')
+
+            let str = "";
+
+            $(".uploadResult ul li").each(function (i, obj) {
+                const jobj = $(obj);
+                console.dir(jobj);
+
+                str += "<input type = 'hidden' name = 'attachList[" + i + "].fileName' value = '" + jobj.data("filename") + "'>";
+                str += "<input type = 'hidden' name = 'attachList[" + i + "].uuid' value = '" + jobj.data("uuid") + "'>";
+                str += "<input type = 'hidden' name = 'attachList[" + i + "].uploadPath' value = '" + jobj.data("path") + "'>";
+                str += "<input type = 'hidden' name = 'attachList[" + i + "].fileType' value = '" + jobj.data("type") + "'>";
+
+            });
+            formObj.append(str).submit();
+        })
+
+        // 업로드 파일 종류 및 크기 제한
+        let regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$")
+        let maxSize = 5242880   // 5MB
+
+        function checkExtension(fileName, fileSize) {
+            if (fileSize > maxSize) {
+                alert('파일 사이즈 초과')
+                return false
+            }
+            if (regex.test(fileName)) {
+                alert('해당 종류의 파일은 업로드 할 수 없습니다.')
+            }
+            return true
+        }
+
+        function showUploadResult(uploadResultArr) {
+
+            if (!uploadResultArr || uploadResultArr.length === 0) {
+                return
+            }
+            let uploadUL = $('.uploadResult ul')
+            let str = ''
+
+            $(uploadResultArr).each(function (i, obj) {
+
+                if (!obj.image) {
+
+                    let fileCallPath = encodeURIComponent(obj.uploadPath + '/' + obj.uuid + '_' + obj.fileName)
+                    let fileLink = fileCallPath.replace(new RegExp(/\\/g), '/')
+                    str += "<li><a href='/download?fileName=" + fileCallPath + "'><img src='/resources/img/attach.png'>"
+                        + obj.fileName + "</a>" + "<span data-file=\'" + fileCallPath + "\' data-type='file'> x </span>"
+                        + "<div></li>"
+                } else {
+
+                    let fileCallPath = encodeURIComponent(obj.uploadPath + '/s_' + obj.uuid + '_' + obj.fileName)
+                    let originPath = obj.uploadPath + '\\' + obj.uuid + '_' + obj.fileName
+                    originPath = originPath.replace(new RegExp(/\\/g), '/')
+                    str += "<li><a href=\"javascript:showImage(\'" + originPath + "\')\"><img src='/display?fileName="
+                        + fileCallPath + "'></a>" + "<span data-file=\'" + fileCallPath + "\' data-type='image'> x </span><li>";
+                }
+            })
+            uploadResult.append(str)
+        }
+
+        $("input[type='file']").change(function (e) {
+            let formData = new FormData()
+            let inputFile = $("input[name='uploadFile']")
+            let files = inputFile[0].files
+
+            for (let i = 0; i < files.length; i++) {
+                if (!checkExtension(files[i].name, files[i].size)) {
+                    return false
+                }
+                formData.append('uploadFile', files[i])
+            }
+
+            $.ajax({
+                url: '/uploadAjaxAction',
+                processData: false,
+                contentType: false,
+                data: formData,
+                type: 'POST',
+                dataType: 'json',
+                success: function (result) {
+                    alert('업로드 완료')
+                    showUploadResult(result)    // 업로드 결과 처리 함수
+                }
+            })  // $.ajax
+        })
+    })
+</script>
 </body>
 <!-- body 끝 -->
 

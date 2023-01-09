@@ -1,20 +1,23 @@
 package com.crunch.controller;
 
-import com.crunch.domain.BoardCommentDTO;
-import com.crunch.domain.BoardCommentList;
-import com.crunch.domain.BoardDTO;
-import com.crunch.domain.BoardList;
+import com.crunch.domain.*;
 import com.crunch.service.BoardCommentService;
 import com.crunch.service.BoardService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.HashMap;
-import java.util.List;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @AllArgsConstructor
@@ -80,8 +83,8 @@ public class BoardController {
     // 게시글 조회
     @RequestMapping(value = "boardView")
     public String boardView(Model model,
-                                      @RequestParam("postID") int postID,
-                                      @RequestParam("currentPage") int currenPage) {
+                            @RequestParam("postID") int postID,
+                            @RequestParam("currentPage") int currenPage) {
 
         log.info("BoardController의 boardView() 실행");
 
@@ -106,13 +109,76 @@ public class BoardController {
         return "board/boardInsert";
     }
 
+    // 파일 업로드 AJAX
+    @PostMapping(value = "/uploadAjaxAction", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public void uploadAjaxPost(MultipartFile[] uploadFile) {
+
+        String uploadFolder = "/Users/kyle/Documents/Study/CRUNCH/CoWorkers_Spring/upload";
+
+        String uploadFolderPath = getFolder();
+        // make folder --------
+        File uploadPath = new File(uploadFolder, uploadFolderPath);
+        log.info("upload path: {}", uploadPath);
+
+        if (uploadPath.exists() == false) {
+            uploadPath.mkdirs();
+        }
+        // make yyyy/MM/dd folder
+
+        for (MultipartFile multipartFile : uploadFile) {
+
+            log.info("-----------------------------------------------------------------------------------------------");
+            log.info("Upload File Name: {}", multipartFile.getOriginalFilename());
+            log.info("Upload File Size: {}", multipartFile.getSize());
+
+            BoardAttachDTO attachDTO = new BoardAttachDTO();
+
+            String uploadFileName = multipartFile.getOriginalFilename();
+
+            // IE has file path
+            uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("\\") + 1);
+            log.info("only file name: {}", uploadFileName);
+
+            UUID uuid = UUID.randomUUID();
+
+            uploadFileName = uuid.toString() + "_" + uploadFileName;
+
+            File saveFile = new File(uploadPath, uploadFileName);
+
+            try {
+                multipartFile.transferTo(saveFile);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+        }   // end for
+
+    }
+
+    // 년월일 폴더 생성
+    private String getFolder() {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date date = new Date();
+
+        String str = sdf.format(date);
+
+        return str.replace("-", File.separator);
+    }
+
     // 신규 게시글 작성
     @RequestMapping(value = "boardInsertOK")
-    public String boardInsertOK(BoardDTO boardDTO) {
+    public String boardInsertOK(BoardDTO boardDTO, RedirectAttributes rttr) {
 
-        log.info("BoardController의 boardInsertOK() 실행");
+        log.info("BoardController의 boardInsertOK() 실행 → boardDTO: {}", boardDTO);
 
-        service.insert(boardDTO);
+        if (boardDTO.getAttachList() != null) {
+            boardDTO.getAttachList().forEach(attachDTO -> log.info("{}", attachDTO));
+        }
+
+//        service.insert(boardDTO);
+//        rttr.addFlashAttribute("result", boardDTO.getPostID());
 
         return "redirect:board";
     }

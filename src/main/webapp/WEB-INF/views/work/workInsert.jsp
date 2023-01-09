@@ -121,7 +121,8 @@
                             </th>
                             <td>
                                 <input name="currentProgress" type="radio" value="1" checked/><img width="15"
-                                                                                                   src="images/sug.png"/> 요청
+                                                                                                   src="images/sug.png"/>
+                                요청
                                 <input name="currentProgress" type="radio" value="2"/><img width="15"
                                                                                            src="images/on.png"/> 진행
                                 <input name="currentProgress" type="radio" value="3"/><img width="15"

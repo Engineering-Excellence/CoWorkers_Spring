@@ -247,13 +247,15 @@
                                 <c:if test="${boardCommentDTO.deleteDate == null}">
                                     <td colspan="4" style="vertical-align: middle">
                                             <%--${boardCommentDTO.commentID}.--%>
-                                        <c:set var="userName" value="${fn:replace(boardCommentDTO.userName, '<', '&lt;')}"/>
+                                        <c:set var="userName"
+                                               value="${fn:replace(boardCommentDTO.userName, '<', '&lt;')}"/>
                                         <c:set var="userName" value="${fn:replace(userName, '>', '&gt;')}"/>
                                             ${userName}님이
                                         <fmt:formatDate value="${boardCommentDTO.writeDate}"
                                                         pattern="yyyy.MM.dd(E) HH:mm:ss"/>에
                                         남긴 댓글:<br/>
-                                        <c:set var="content" value="${fn:replace(boardCommentDTO.content, '<', '&lt;')}"/>
+                                        <c:set var="content"
+                                               value="${fn:replace(boardCommentDTO.content, '<', '&lt;')}"/>
                                         <c:set var="content" value="${fn:replace(content, '>', '&gt;')}"/>
                                         <c:set var="content" value="${fn:replace(content, enter, '<br/>')}"/>
                                             ${content}<br/>

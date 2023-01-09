@@ -3,6 +3,8 @@ package com.crunch.domain;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @Data
 public class BoardDTO {
@@ -18,6 +20,8 @@ public class BoardDTO {
     private int commentCount = 0;   // 덧글 수
     private String notice = "false";    // 공지글 여부
     private String ip;  // IP 주소
+    private List<BoardAttachDTO> attachList;
+
     private int userID; // FK, 사원번호
 
 }

@@ -18,7 +18,7 @@
 
     <title>CoWorkers</title>
 
-   	<link rel="icon" href="images/favicon_16.png">
+    <link rel="icon" href="images/favicon_16.png">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/coWorkers.css" rel="stylesheet">
 
@@ -37,37 +37,38 @@
 %>
 <fmt:requestEncoding value="UTF-8"/>
 <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
+    <div class="container-fluid">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="mainView.sil">coWorkers</a>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="mainView.sil">coWorkers</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">프로필</a></li>
-            <li><a href="#">환경설정</a></li>
-            <li><a href="logout.sil">로그아웃</a></li>
-          </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">프로필</a></li>
+                <li><a href="#">환경설정</a></li>
+                <li><a href="logout.sil">로그아웃</a></li>
+            </ul>
+            <form class="navbar-form navbar-right">
+                <input type="text" class="form-control" placeholder="Search...">
+            </form>
         </div>
-      </div>
-    </nav>
+    </div>
+</nav>
 
-    <div class="container-fluid">
-      <div class="row">
+<div class="container-fluid">
+    <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
-          <ul class="nav nav-sidebar">
-            <li><a href="board.sil">게시글</a></li>
-            <li><a href="work.sil">업무관리</a></li>
-            <li><a href="event.sil">일정관리</a></li>
-          </ul>
+            <ul class="nav nav-sidebar">
+                <li><a href="board.sil">게시글</a></li>
+                <li><a href="work.sil">업무관리</a></li>
+                <li><a href="event.sil">일정관리</a></li>
+            </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
@@ -81,7 +82,7 @@
                         <tr>
                             <th style="width: 10%" class="align-middle table-dark">제목
                             </th>
-                            <td  >
+                            <td>
                                 <input id="subject" type="text" class="form-control form-control-sm"
                                        value="${dto.subject}" name="subject"/>
                             </td>
@@ -89,7 +90,7 @@
                         <tr>
                             <th class="align-middle table-dark">내용
                             </th>
-                            <td  >
+                            <td>
                 <textarea id="content" class="form-control form-control-sm" rows="10" name="content"
                           style="resize: none">${dto.content}</textarea>
                             </td>
@@ -97,7 +98,7 @@
                         <tr>
                             <th class="align-middle table-dark">우선순위
                             </th>
-                            <td  >
+                            <td>
                                 <c:if test="${dto.priority == 1}">
                                     <input name="priority" type="radio" checked
                                            value="${dto.currentProgress}"/><b style="color: crimson">긴급</b>
@@ -133,22 +134,28 @@
                         <tr>
                             <th class="align-middle table-dark">업무상태${dto.currentProgress}
                             </th>
-                            <td  >
+                            <td>
                                 <c:if test="${dto.currentProgress == 1}">
                                     <input name="currentProgress" type="radio" checked
                                            value="${dto.currentProgress}"/><img width="15" src="images/sug.png"> 요청
-                                    <input name="currentProgress" type="radio" value="2"/><img width="15" src="images/on.png"> 진행
-                                    <input name="currentProgress" type="radio" value="3"/><img width="15" src="images/fin.png"> 완료
+                                    <input name="currentProgress" type="radio" value="2"/><img width="15"
+                                                                                               src="images/on.png"> 진행
+                                    <input name="currentProgress" type="radio" value="3"/><img width="15"
+                                                                                               src="images/fin.png"> 완료
                                 </c:if>
                                 <c:if test="${dto.currentProgress == 2}">
-                                    <input name="currentProgress" type="radio" value="1"/><img width="15" src="images/sug.png"> 요청
+                                    <input name="currentProgress" type="radio" value="1"/><img width="15"
+                                                                                               src="images/sug.png"> 요청
                                     <input name="currentProgress" type="radio" checked
                                            value="${dto.currentProgress}"/><img width="15" src="images/on.png"> 진행
-                                    <input name="currentProgress" type="radio" value="3"/><img width="15" src="images/fin.png"> 완료
+                                    <input name="currentProgress" type="radio" value="3"/><img width="15"
+                                                                                               src="images/fin.png"> 완료
                                 </c:if>
                                 <c:if test="${dto.currentProgress == 3}">
-                                    <input name="currentProgress" type="radio" value="1"/><img width="15" src="images/sug.png"> 요청
-                                    <input name="currentProgress" type="radio" value="2"/><img width="15" src="images/on.png"> 진행
+                                    <input name="currentProgress" type="radio" value="1"/><img width="15"
+                                                                                               src="images/sug.png"> 요청
+                                    <input name="currentProgress" type="radio" value="2"/><img width="15"
+                                                                                               src="images/on.png"> 진행
                                     <input name="currentProgress" type="radio" checked
                                            value="${dto.currentProgress}"/><img width="15" src="images/fin.png"> 완료
                                 </c:if>
@@ -157,7 +164,7 @@
                         <tr>
                             <th class="align-middle table-dark">업무진척도
                             </th>
-                            <td  >
+                            <td>
                                 <select id="workProgress" class="form-control form-control-sm" name="workProgress"
                                         size="1">
                                     <option value="${dto.workProgress}">${dto.workProgress*10}%</option>
@@ -178,7 +185,7 @@
                         <tr>
                             <th class="align-middle table-dark">시작일
                             </th>
-                            <td  >
+                            <td>
                                 <input id="startDate" type="date" class="form-control form-control-sm" name="startDate"
                                        value="${dto.startDate}"/>
                             </td>
@@ -186,7 +193,7 @@
                         <tr>
                             <th class="align-middle table-dark">마감일
                             </th>
-                            <td  >
+                            <td>
                                 <input id="deadline" type="date" class="form-control form-control-sm" name="deadline"
                                        value="${dto.deadline}"/>
                             </td>
