@@ -100,7 +100,7 @@
                             </th>
                             <td>
                                 <input id="userName" type="text" class="form-control form-control-sm" name="userName"
-                                       style="width: 80%" value="${userInfo.get(0).getUserName()}" readonly/>
+                                       style="width: 50%;" value="${userInfo.get(0).getUserName()}" readonly/>
                             </td>
 
                             <!-- 공지글 여부 -->
@@ -121,14 +121,20 @@
 
                         <tr>
                             <th class="align-middle table-dark">파일첨부</th>
-                            <td colspan="2"><input type="file" name="uploadFile" multiple/></td>
-                            <%--                            <td><button id="uploadBtn">업로드</button></td>--%>
-
-                            <div class="uploadResult">
+                            <td colspan="2" class="uploadTd">
+                                <input type="file" name="uploadFile" multiple/>
+                            </td>
+                            <%--<td>
+                                <button id="uploadBtn">업로드</button>
+                            </td>--%>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <td colspan="2" class="uploadResult">
                                 <ul>
 
                                 </ul>
-                            </div>
+                            </td>
                         </tr>
 
                         <tr class="table-secondary">
@@ -153,12 +159,15 @@
 <script type="text/javascript" src="/js/jquery-3.6.1.min.js"></script>
 <script type="text/javascript" src="/js/bootstrap.min.js"></script>
 <script>
-    // 파일 업로드 AJAX
-    $(document).ready(function (e) {
+    'use strict'
 
-        // 기본 이벤트 제거
+    // 파일 업로드 AJAX
+    $(document).ready(function () {
+
         let formObj = $("form[role='form']")
         $("button[type='submit']").on('click', function (e) {
+
+            // 기본 이벤트 제거
             e.preventDefault()
             console.log('submit clicked')
 
@@ -178,7 +187,7 @@
         })
 
         // 업로드 파일 종류 및 크기 제한
-        let regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$")
+        let regex = new RegExp('(.*?)\.(exe|sh|zip|alz)$')
         let maxSize = 5242880   // 5MB
 
         function checkExtension(fileName, fileSize) {
@@ -188,43 +197,45 @@
             }
             if (regex.test(fileName)) {
                 alert('해당 종류의 파일은 업로드 할 수 없습니다.')
+                return false
             }
             return true
         }
 
-        function showUploadResult(uploadResultArr) {
+        // 업로드 결과
+        let uploadResult = $('.uploadResult ul')
 
-            if (!uploadResultArr || uploadResultArr.length === 0) {
-                return
-            }
-            let uploadUL = $('.uploadResult ul')
+        function showUploadedFile(uploadResultArr) {
+
+            /*if (!uploadResultArr || uploadResultArr.length === 0) {
+                return;
+            }*/
             let str = ''
 
             $(uploadResultArr).each(function (i, obj) {
 
                 if (!obj.image) {
-
-                    let fileCallPath = encodeURIComponent(obj.uploadPath + '/' + obj.uuid + '_' + obj.fileName)
-                    let fileLink = fileCallPath.replace(new RegExp(/\\/g), '/')
-                    str += "<li><a href='/download?fileName=" + fileCallPath + "'><img src='/resources/img/attach.png'>"
-                        + obj.fileName + "</a>" + "<span data-file=\'" + fileCallPath + "\' data-type='file'> x </span>"
-                        + "<div></li>"
+                    str += "<li><img src='/resources/images/doker.ico'>" + obj.fileName + "</li>"
                 } else {
+                    // str += "<li>" + obj.fileName + "</li>"
 
-                    let fileCallPath = encodeURIComponent(obj.uploadPath + '/s_' + obj.uuid + '_' + obj.fileName)
-                    let originPath = obj.uploadPath + '\\' + obj.uuid + '_' + obj.fileName
-                    originPath = originPath.replace(new RegExp(/\\/g), '/')
-                    str += "<li><a href=\"javascript:showImage(\'" + originPath + "\')\"><img src='/display?fileName="
-                        + fileCallPath + "'></a>" + "<span data-file=\'" + fileCallPath + "\' data-type='image'> x </span><li>";
+                    let fileCallPath = encodeURIComponent(obj.uploadPath + "/s_" + obj.uuid + "_" + obj.fileName)
+                    str += "<li><img src='/display?fileName=" + fileCallPath + "'></li>"
                 }
             })
+
             uploadResult.append(str)
         }
 
+        let cloneObj = $('.uploadTd').clone()
+
+        // 파일 업로드 버튼
         $("input[type='file']").change(function (e) {
+            // $('#uploadBtn').on('click', function (e) {
             let formData = new FormData()
             let inputFile = $("input[name='uploadFile']")
             let files = inputFile[0].files
+            console.log(files)
 
             for (let i = 0; i < files.length; i++) {
                 if (!checkExtension(files[i].name, files[i].size)) {
@@ -241,8 +252,10 @@
                 type: 'POST',
                 dataType: 'json',
                 success: function (result) {
+                    console.log(result)
                     alert('업로드 완료')
-                    showUploadResult(result)    // 업로드 결과 처리 함수
+                    showUploadedFile(result)    // 업로드 결과 처리 함수
+                    $('.uploadTd').html(cloneObj.html())
                 }
             })  // $.ajax
         })

@@ -5,17 +5,22 @@ import com.crunch.service.BoardCommentService;
 import com.crunch.service.BoardService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnailator;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -31,11 +36,11 @@ public class BoardController {
 
 
     // 게시글 목록 불러오기
-    @RequestMapping(value = "board")
+    @GetMapping(value = "board")
     public String board(Model model,
                         @RequestParam(value = "currentPage", required = false, defaultValue = "1") int currentPage) {
 
-        log.info("BoardController의 board() 실행");
+        log.info("board() 실행");
 
         // 페이지 당 표시할 글 개수, 전체 글 개수 저장
         int pageSize = 10;
@@ -65,12 +70,12 @@ public class BoardController {
     }
 
     // 게시글 조회 수 증가
-    @RequestMapping(value = "boardHit")
+    @GetMapping(value = "boardHit")
     public String boardHit(Model model,
                            @RequestParam("postID") int postID,
                            @RequestParam("currentPage") int currentPage) {
 
-        log.info("BoardController의 boardHit() 실행");
+        log.info("boardHit() 실행");
 
         service.hit(postID);
 
@@ -81,12 +86,12 @@ public class BoardController {
     }
 
     // 게시글 조회
-    @RequestMapping(value = "boardView")
+    @GetMapping(value = "boardView")
     public String boardView(Model model,
                             @RequestParam("postID") int postID,
                             @RequestParam("currentPage") int currenPage) {
 
-        log.info("BoardController의 boardView() 실행");
+        log.info("boardView() 실행");
 
         BoardDTO boardDTO = service.selectByPostID(postID);
         boardDTO.setCommentCount(commentService.commentCount(postID));
@@ -101,10 +106,10 @@ public class BoardController {
     }
 
     // 게시글 쓰기 페이지 진입
-    @RequestMapping(value = "boardInsert")
+    @GetMapping(value = "boardInsert")
     public String boardInsert() {
 
-        log.info("BoardController의 boardInsert() 실행");
+        log.info("boardInsert() 실행");
 
         return "board/boardInsert";
     }
@@ -112,19 +117,21 @@ public class BoardController {
     // 파일 업로드 AJAX
     @PostMapping(value = "/uploadAjaxAction", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public void uploadAjaxPost(MultipartFile[] uploadFile) {
+    public ResponseEntity<List<BoardAttachDTO>> uploadAjaxPost(MultipartFile[] uploadFile) {
 
+        log.info("uploadAjaxPost() 실행 → uploadFile: {}", uploadFile);
+
+        List<BoardAttachDTO> attachList = new ArrayList<>();
         String uploadFolder = "/Users/kyle/Documents/Study/CRUNCH/CoWorkers_Spring/upload";
 
         String uploadFolderPath = getFolder();
-        // make folder --------
+        // 폴더 생성
         File uploadPath = new File(uploadFolder, uploadFolderPath);
         log.info("upload path: {}", uploadPath);
 
-        if (uploadPath.exists() == false) {
+        if (!uploadPath.exists()) {
             uploadPath.mkdirs();
         }
-        // make yyyy/MM/dd folder
 
         for (MultipartFile multipartFile : uploadFile) {
 
@@ -137,22 +144,41 @@ public class BoardController {
             String uploadFileName = multipartFile.getOriginalFilename();
 
             // IE has file path
-            uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("\\") + 1);
+            uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("/") + 1);
             log.info("only file name: {}", uploadFileName);
 
             UUID uuid = UUID.randomUUID();
 
-            uploadFileName = uuid.toString() + "_" + uploadFileName;
-
-            File saveFile = new File(uploadPath, uploadFileName);
+            uploadFileName = uuid + "_" + uploadFileName;
 
             try {
+                File saveFile = new File(uploadPath, uploadFileName);
                 multipartFile.transferTo(saveFile);
+
+                attachDTO.setFileName(multipartFile.getOriginalFilename());
+                attachDTO.setUuid(uuid.toString());
+                attachDTO.setUploadPath(uploadFolderPath);
+
+                // 파일 이미지 타입 체크
+                if (checkImageType(saveFile)) {
+
+                    attachDTO.setImage(true);
+
+                    FileOutputStream thumbnail = new FileOutputStream(new File(uploadPath, "s_" + uploadFileName));
+                    Thumbnailator.createThumbnail(multipartFile.getInputStream(), thumbnail, 100, 100);
+
+                    thumbnail.close();
+                }
+
+                // 리스트에 추가
+                attachList.add(attachDTO);
+
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
         }   // end for
 
+        return new ResponseEntity<>(attachList, HttpStatus.OK);
     }
 
     // 년월일 폴더 생성
@@ -167,11 +193,52 @@ public class BoardController {
         return str.replace("-", File.separator);
     }
 
+    // 이미지 여부 확인
+    private boolean checkImageType(File file) {
+
+        log.info("checkImageType() 실행 → file: {}", file);
+
+        try {
+            String contentType = Files.probeContentType(file.toPath());
+
+            return contentType.startsWith("image");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    // 섬네일 전송
+    @GetMapping(value = "display")
+    @ResponseBody
+    public ResponseEntity<byte[]> getFile(String fileName) {
+
+        log.info("getFile() 실행 → fileName: {}", fileName);
+
+        String uploadFolder = "/Users/kyle/Documents/Study/CRUNCH/CoWorkers_Spring/upload/";
+        File file = new File(uploadFolder + fileName);
+        log.info("file: {}", file);
+
+        ResponseEntity<byte[]> result = null;
+
+        try {
+            HttpHeaders header = new HttpHeaders();
+
+            header.add("Content-Type", Files.probeContentType(file.toPath()));
+            result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), header, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     // 신규 게시글 작성
-    @RequestMapping(value = "boardInsertOK")
+    @PostMapping(value = "boardInsertOK")
     public String boardInsertOK(BoardDTO boardDTO, RedirectAttributes rttr) {
 
-        log.info("BoardController의 boardInsertOK() 실행 → boardDTO: {}", boardDTO);
+        log.info("boardInsertOK() 실행 → boardDTO: {}", boardDTO);
 
         if (boardDTO.getAttachList() != null) {
             boardDTO.getAttachList().forEach(attachDTO -> log.info("{}", attachDTO));
@@ -184,12 +251,12 @@ public class BoardController {
     }
 
     // 게시글 수정 페이지 호출
-    @RequestMapping(value = "boardUpdate")
+    @GetMapping(value = "boardUpdate")
     public String boardUpdate(Model model,
                               @RequestParam("postID") int postID,
                               @RequestParam("currentPage") int currentPage) {
 
-        log.info("BoardController의 boardUpdate() 실행");
+        log.info("boardUpdate() 실행");
 
         BoardDTO boardDTO = service.selectByPostID(postID);
 
@@ -200,11 +267,11 @@ public class BoardController {
     }
 
     // 게시글 수정
-    @RequestMapping(value = "boardUpdateOK")
+    @PostMapping(value = "boardUpdateOK")
     public String boardUpdateOK(Model model, BoardDTO boardDTO,
                                 @RequestParam("currentPage") int currentPage) {
 
-        log.info("BoardController의 boardUpdateOK() 실행");
+        log.info("boardUpdateOK() 실행");
 
         service.update(boardDTO);
 
@@ -215,12 +282,12 @@ public class BoardController {
     }
 
     // 게시글 삭제
-    @RequestMapping(value = "boardDelete")
+    @GetMapping(value = "boardDelete")
     public String boardDelete(Model model,
                               @RequestParam("postID") int postID,
                               @RequestParam("currentPage") int currentPage) {
 
-        log.info("BoardController의 boardDelete() 실행");
+        log.info("boardDelete() 실행");
 
         service.delete(postID);
 
@@ -236,7 +303,7 @@ public class BoardController {
                                  @RequestParam("mode") String mode,
                                  @RequestParam("currentPage") int currentPage) {
 
-        log.info("BoardController의 boardCommentOK() 실행");
+        log.info("boardCommentOK() 실행");
 
         switch (mode) {
             case "insert":
@@ -256,13 +323,13 @@ public class BoardController {
     }
 
     // 댓글 삭제
-    @RequestMapping(value = "boardCommentDelete")
+    @GetMapping(value = "boardCommentDelete")
     public String boardCommentDelete(Model model,
                                      @RequestParam("commentID") int commentID,
                                      @RequestParam("postID") int postID,
                                      @RequestParam("currentPage") int currentPage) {
 
-        log.info("BoardController의 boardCommentDelete() 실행");
+        log.info("boardCommentDelete() 실행");
 
         commentService.commentDelete(commentID);
 
